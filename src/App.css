@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.section:first-child {
+  width: 450px;
+  padding: 40px;
+  background-color: rgb(165, 163, 162);
+}
+
+.section:last-child {
+  width: 650px;
+  padding: 40px;
+  background-color: rgb(68, 65, 65);
+  color: rgb(247, 127, 83);
+}

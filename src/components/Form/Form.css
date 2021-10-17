@@ -1,0 +1,31 @@
+.submit__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form__input {
+  width: 250px;
+  height: 25px;
+  background-color: rgb(247, 127, 83);
+  border: 1px solid rgb(68, 65, 65);
+}
+
+.form__button {
+  margin-top: 35px;
+  width: 255px;
+  height: 35px;
+
+  background-color: rgb(68, 65, 65);
+  color: rgb(168, 166, 166);
+  border: 1px solid rgb(168, 166, 166);
+  text-align: center;
+
+  cursor: pointer;
+}
+
+.form__button:hover,
+.form__button:focus {
+  background-color: black;
+  color: rgb(247, 127, 83);
+  border: 2px solid rgb(247, 127, 83);
+}
