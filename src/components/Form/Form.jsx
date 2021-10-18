@@ -1,84 +1,81 @@
 import './Form.css';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import * as action from '../../redux/contacts/contacts-action';
+import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import * as selectors from '../../redux/contacts/contacts-selectors';
+import * as operations from '../../redux/contacts/contacts-operation';
 
-class Form extends Component {
-  state = {
-    name: '',
-    number: '',
+export default function Form() {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
+  const items = useSelector(selectors.getItems);
+  const dispatch = useDispatch();
+
+  const handleChange = e => {
+    const { name, value } = e.currentTarget;
+
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+
+      case 'number':
+        setNumber(value);
+        break;
+
+      default:
+        return;
+    }
   };
 
-  handleChange = event => {
-    const { name, value } = event.currentTarget;
-    this.setState({ [name]: value });
-  };
-
-  handleSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
-
-    const { items, onSubmit } = this.props;
-    const { name } = this.state;
 
     if (items.some(item => item.name === name)) {
       alert('Contact already exist in contact list');
       return;
     }
 
-    onSubmit(this.state);
-    this.reset();
+    dispatch(operations.addContact({ name, number }));
+    reset();
   };
 
-  reset = () => {
-    this.setState({
-      name: '',
-      number: '',
-    });
+  const reset = () => {
+    setName('');
+    setNumber('');
   };
 
-  render() {
-    return (
-      <form className="submit__form" onSubmit={this.handleSubmit}>
-        <label className="form__label">
-          <h3>Name</h3>
-          <input
-            className="form__input"
-            type="text"
-            name="name"
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
-            required
-            value={this.state.name}
-            onChange={this.handleChange}
-          />
-        </label>
-        <label className="form__label">
-          <h3>Number</h3>
-          <input
-            className="form__input"
-            type="tel"
-            name="number"
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
-            required
-            value={this.state.number}
-            onChange={this.handleChange}
-          />
-        </label>
-        <button className="form__button" type="submit">
-          Add contact
-        </button>
-      </form>
-    );
-  }
+  return (
+    <form className="submit__form" onSubmit={handleSubmit}>
+      <label className="form__label">
+        <h3>Name</h3>
+        <input
+          className="form__input"
+          type="text"
+          name="name"
+          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
+          required
+          value={name}
+          onChange={handleChange}
+        />
+      </label>
+      <label className="form__label">
+        <h3>Number</h3>
+        <input
+          className="form__input"
+          type="tel"
+          name="number"
+          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+          title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
+          required
+          value={number}
+          onChange={handleChange}
+        />
+      </label>
+      <button className="form__button" type="submit">
+        Add contact
+      </button>
+    </form>
+  );
 }
-
-const mapStateToProps = state => ({
-  items: state.contacts.items,
-});
-
-const mapDispatchToProps = dispatch => ({
-  onSubmit: value => dispatch(action.addContact(value)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Form);

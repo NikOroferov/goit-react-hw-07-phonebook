@@ -1,40 +1,40 @@
 import './Contacts.css';
-import { connect } from 'react-redux';
-import * as action from '../../redux/contacts/contacts-action';
+import Loader from 'react-loader-spinner';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import * as operations from '../../redux/contacts/contacts-operation';
+import * as selectors from '../../redux/contacts/contacts-selectors';
 
-function Contacts({ contacts, handleDeleteContact }) {
+export default function Contacts() {
+  const contacts = useSelector(selectors.getVisibleContacts);
+  const isLoading = useSelector(selectors.isLoading);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(operations.getContacts());
+  }, [dispatch]);
+
   return (
-    <ul className="contacts__list">
-      {contacts.map(({ id, name, number }) => (
-        <li className="contacts__item" key={id}>
-          <p className="contacts__name">{name}</p>
-          <p>{number}</p>
-          <button
-            className="delete__btn"
-            onClick={() => handleDeleteContact(id)}
-          >
-            Delete contact
-          </button>
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className="contacts__list">
+        {contacts.map(({ id, name, number }) => (
+          <li className="contacts__item" key={id}>
+            <p className="contacts__name">{name}</p>
+            <p>{number}</p>
+            <button
+              type="button"
+              className="delete__btn"
+              onClick={() => dispatch(operations.deleteContact(id))}
+            >
+              Delete contact
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {isLoading && (
+        <Loader type="Oval" color="#ffa600" height={80} width={80} />
+      )}
+    </>
   );
 }
-
-const getVisibleContacts = (contacts, filter) => {
-  const normalizedFilter = filter.toLowerCase();
-
-  return contacts.filter(contact =>
-    contact.name.toLowerCase().includes(normalizedFilter),
-  );
-};
-
-const mapStateToProps = ({ contacts: { items, filter } }) => ({
-  contacts: getVisibleContacts(items, filter),
-});
-
-const mapDispatchToProps = dispatch => ({
-  handleDeleteContact: id => dispatch(action.deleteContact(id)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Contacts);
